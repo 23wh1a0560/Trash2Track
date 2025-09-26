@@ -1,34 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { fetchReports } from "../services/api"; // API to fetch reports
+// frontend/src/components/SignInButton.js
+import React from "react";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 
-const Dashboard = ({ uid }) => {
-  const [reports, setReports] = useState([]);
+export default function SignInButton() {
+  const handleGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider();
 
-  useEffect(() => {
-    // Fetch reports when component is mounted or uid changes
-    const loadReports = async () => {
-      const data = await fetchReports(uid);
-      setReports(data);
-    };
-    loadReports();
-  }, [uid]);  // Re-fetch reports when uid changes
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log("User signed in:", result.user);
+        alert(`Welcome ${result.user.displayName}!`);
+      })
+      .catch((error) => {
+        console.error("Error during sign-in:", error);
+        alert(`Sign-in failed: ${error.message}`);
+      });
+  };
 
   return (
-    <div>
-      <h1>Your Reports</h1>
-      <ul>
-        {reports.length === 0 ? (
-          <li>No reports found.</li>
-        ) : (
-          reports.map((report) => (
-            <li key={report.id}>
-              {report.title} - {report.status}
-            </li>
-          ))
-        )}
-      </ul>
-    </div>
+    <button onClick={handleGoogleSignIn}>
+      Sign In with Google
+    </button>
   );
-};
-
-export default Dashboard;
+}

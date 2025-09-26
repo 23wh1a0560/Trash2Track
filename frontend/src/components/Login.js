@@ -1,22 +1,22 @@
 import React, { useState } from "react";
-import { auth } from "../firebase/firebase";  // Firebase authentication
-import { useNavigate } from "react-router-dom"; // For redirecting after login
+import { auth } from "../firebase/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState(""); // Store email input
-  const [password, setPassword] = useState(""); // Store password input
-  const [error, setError] = useState(""); // For error messages
-  const history = useNavigate(); // To redirect to dashboard after successful login
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      // Redirect to the Dashboard once logged in
-      history("/dashboard");
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/dashboard");
     } catch (error) {
-      setError(error.message); // Handle login error
+      setError(error.message);
     }
   };
 
@@ -41,7 +41,7 @@ const Login = () => {
           />
         </div>
         <button type="submit">Login</button>
-        {error && <p>{error}</p>} {/* Display error message */}
+        {error && <p>{error}</p>}
       </form>
     </div>
   );

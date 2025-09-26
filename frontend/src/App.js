@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { auth } from "./firebase/firebase"; // Firebase authentication
 import { fetchReports } from "./services/api"; // API service to fetch reports
 import Dashboard from "./components/Dashboard"; // Your dashboard component
-import Login from "./components/Login"; // Your login component (you will create it)
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./components/Login"; // Your login component
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+
 
 function App() {
   const [user, setUser] = useState(null); // To store logged-in user
@@ -34,9 +35,29 @@ function App() {
       )} */}
       <BrowserRouter>
       <Routes>
-        <Route path="/*" element={<Login/>}/>
-        {user &&
-          <Route path="/dashboard" element={<Dashboard/>}/>}
+        {/* Public route */}
+        <Route
+          path="/login"
+          element={!user ? <Login /> : <Navigate to="/dashboard" replace />}
+        />
+
+        {/* Protected route */}
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard uid={user.uid} /> : <Navigate to="/login" replace />}
+        />
+
+        {/* Redirect root to login or dashboard */}
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
+        />
+
+        {/* Catch-all redirect */}
+        <Route
+          path="*"
+          element={<Navigate to={user ? "/dashboard" : "/login"} replace />}
+        />
       </Routes>
       </BrowserRouter>
     </div>

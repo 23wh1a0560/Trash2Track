@@ -5,12 +5,13 @@ import { getStorage } from "firebase/storage";
 
 // Your Firebase config from the Firebase Console (frontend setup)
 const firebaseConfig = {
-  apiKey: "AIzaSyBbbzrH6IueeGM9btiCYngcPDgG7_eTk6U",
-  authDomain: "trash2track.firebaseapp.com",
-  projectId: "trash2track",
-  storageBucket: "trash2track.firebasestorage.app",
-  messagingSenderId: "107012570147",
-  appId: "1:107012570147:web:cb830dcc6f7f73957e8596"
+  apiKey: "AIzaSyDYb1rK3itGEZDWekHYfpSa87VxI4KF_k4",
+  authDomain: "trash2track-ab0ac.firebaseapp.com",
+  projectId: "trash2track-ab0ac",
+  storageBucket: "trash2track-ab0ac.firebasestorage.app",
+  messagingSenderId: "870364335001",
+  appId: "1:870364335001:web:f0d10eb8fe2eea7b60a108",
+  measurementId: "G-PECQEHWKFY"
 };
 
 // Initialize Firebase

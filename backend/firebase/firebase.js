@@ -3,7 +3,7 @@ const serviceAccount = require("./trash2track-ab0ac-firebase-adminsdk-fbsvc-65ac
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://<your-database-url>.firebaseio.com"  // Optional for Realtime Database
+  //databaseURL: "https://<your-database-url>.firebaseio.com"  // Optional for Realtime Database
 });
 
 // Export Firebase services (auth, firestore, storage)
