@@ -15,9 +15,100 @@ const CitizenDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
+  const [showPickupForm, setShowPickupForm] = useState(false);
+  // Inside CitizenDashboard component
+
+// --- Replace your reports state initialization ---
+const [reports, setReports] = useState([
+  {
+    id: 1,
+    title: "Overflowing Garbage Bin",
+    description: "A garbage bin on 5th Street is overflowing and attracting stray animals.",
+    waste_type: "general",
+    location: "5th Street, Near Park",
+    status: "reported",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 2,
+    title: "Plastic Waste Dump",
+    description: "Plastic bottles and wrappers dumped near community center.",
+    waste_type: "recyclable",
+    location: "Community Center",
+    status: "in_progress",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 3,
+    title: "Hazardous Waste Spill",
+    description: "Chemical spill reported near workshop, needs urgent cleanup.",
+    waste_type: "hazardous",
+    location: "Industrial Area Zone 3",
+    status: "resolved",
+    created_at: new Date().toISOString()
+  },
+  {
+  id: 4,
+  title: "Unregulated Landfill Expansion",
+  description: "Local landfill site is expanding beyond its boundary, causing foul odor and air pollution complaints from nearby residents.",
+  waste_type: "landfill",
+  location: "Peripheral Road, East Side Colony",
+  status: "under review",
+  created_at: new Date().toISOString()
+}
+
+]);
+
+// --- Add dummy special pickups ---
+const [specialRequests, setSpecialRequests] = useState([
+  {
+    id: 1,
+    title: "Old Furniture Disposal",
+    waste_type: "bulk",
+    location: "Block B Apartments",
+    status: "scheduled",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 2,
+    title: "Broken Electronics Pickup",
+    waste_type: "e_waste",
+    location: "Tech Park Lane",
+    status: "completed",
+    created_at: new Date().toISOString()
+  }
+]);
+
+// --- Add dummy rewards ---
+const mockRewards = [
+  {
+    id: 1,
+    name: "Eco Warrior",
+    desc: "Reported 5+ issues",
+    icon: <Star className="h-8 w-8 text-white" />,
+    unlocked: true,
+    gradient: "from-yellow-400 to-orange-500"
+  },
+  {
+    id: 2,
+    name: "Green Guardian",
+    desc: "Reported 10+ issues",
+    icon: <Recycle className="h-8 w-8 text-white" />,
+    unlocked: false,
+    gradient: "from-emerald-400 to-green-500"
+  },
+  {
+    id: 3,
+    name: "Planet Protector",
+    desc: "Reported 25+ issues",
+    icon: <Leaf className="h-8 w-8 text-white" />,
+    unlocked: false,
+    gradient: "from-blue-400 to-indigo-500"
+  }
+];
+
   const [newReport, setNewReport] = useState({
     title: '',
     description: '',
@@ -204,20 +295,21 @@ const CitizenDashboard = () => {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {reports.slice(0, 3).map((report) => (
-                    <div key={report.id} className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        {getStatusIcon(report.status)}
-                        <div>
-                          <h3 className="font-medium text-gray-900">{report.title}</h3>
-                          <p className="text-sm text-gray-600">{report.location}</p>
-                        </div>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(report.status)}`}>
-                        {report.status.replace('_', ' ')}
-                      </span>
-                    </div>
-                  ))}
+                  {reports.map((report) => (
+  <div key={report.id} className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+    <div className="flex items-center space-x-3">
+      {getStatusIcon(report.status)}
+      <div>
+        <h3 className="font-medium text-gray-900">{report.title}</h3>
+        <p className="text-sm text-gray-600">{report.location}</p>
+      </div>
+    </div>
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(report.status)}`}>
+      {report.status.replace('_', ' ')}
+    </span>
+  </div>
+))}
+
                   {reports.length === 0 && (
                     <p className="text-center text-gray-500 py-8">No reports yet. Create your first report!</p>
                   )}
@@ -227,30 +319,14 @@ const CitizenDashboard = () => {
 
             {/* Quick Actions & Info */}
             <div className="space-y-6">
-              <div className="card card-eco">
-                <h3 className="text-lg font-bold text-emerald-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button 
-                    onClick={() => setShowReportForm(true)}
-                    className="w-full btn-eco flex items-center justify-center space-x-2"
-                  >
-                    <Camera className="h-4 w-4" />
-                    <span>Report Issue</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('schedule')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <Calendar className="h-4 w-4" />
-                    <span>View Schedule</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('training')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <Star className="h-4 w-4" />
-                    <span>Watch Training</span>
-                  </button>
+              <div className="card">
+                <h3 className="text-lg font-bold text-emerald-900 mb-4">Achievement</h3>
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                    <Star className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="font-bold text-gray-900">Eco Warrior</h4>
+                  <p className="text-sm text-gray-600">Reported 5+ waste issues</p>
                 </div>
               </div>
 
@@ -265,16 +341,7 @@ const CitizenDashboard = () => {
                 </div>
               </div>
 
-              <div className="card">
-                <h3 className="text-lg font-bold text-emerald-900 mb-4">Achievement</h3>
-                <div className="text-center">
-                  <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                    <Star className="h-8 w-8 text-white" />
-                  </div>
-                  <h4 className="font-bold text-gray-900">Eco Warrior</h4>
-                  <p className="text-sm text-gray-600">Reported 5+ waste issues</p>
-                </div>
-              </div>
+              
             </div>
           </div>
         )}
@@ -346,10 +413,35 @@ const CitizenDashboard = () => {
             <div className="card">
               <h3 className="text-xl font-bold text-emerald-900 mb-4">Request Special Pickup</h3>
               <p className="text-gray-600 mb-4">Need to dispose of bulk items or hazardous waste? Request a special pickup.</p>
-              <button className="btn-primary">Request Special Pickup</button>
+              <button 
+  onClick={() => setShowPickupForm(true)} 
+  className="btn-primary"
+>
+  Request Special Pickup
+</button>
+
             </div>
+            {/* Special Pickup Requests */}
+<div className="card mt-6">
+  <h3 className="text-xl font-bold text-emerald-900 mb-4">My Special Requests</h3>
+  <div className="space-y-3">
+    {specialRequests.map(req => (
+      <div key={req.id} className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+        <div>
+          <h4 className="font-medium text-gray-900">{req.title}</h4>
+          <p className="text-sm text-gray-600">{req.location}</p>
+        </div>
+        <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+          {req.status}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
           </div>
         )}
+        
 
         {/* Training Tab */}
         {activeTab === 'training' && (
@@ -385,7 +477,7 @@ const CitizenDashboard = () => {
               </div>
               <h2 className="text-3xl font-bold text-emerald-900 mb-2">{user?.eco_points || 0} Points</h2>
               <p className="text-emerald-600">Your Environmental Impact Score</p>
-            </div>
+            </div>11111
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="card text-center">
@@ -444,6 +536,32 @@ const CitizenDashboard = () => {
                   required
                 />
               </div>
+              <div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setNewReport({ ...newReport, image_url: reader.result });
+        };
+        reader.readAsDataURL(file);
+      }
+    }}
+    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+  />
+  {newReport.image_url && (
+    <img
+      src={newReport.image_url}
+      alt="preview"
+      className="mt-3 w-full h-40 object-cover rounded-md"
+    />
+  )}
+</div>
+
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Waste Type</label>
@@ -490,8 +608,79 @@ const CitizenDashboard = () => {
             </form>
           </div>
         </div>
+        
       )}
+    {showPickupForm && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+      <h2 className="text-2xl font-bold text-emerald-900 mb-4">Request Special Pickup</h2>
+      <form 
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleCreateReport();  // you can reuse same handler
+          setShowPickupForm(false);
+        }} 
+        className="space-y-4"
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+          <input
+            type="text"
+            value={newReport.title}
+            onChange={(e) => setNewReport({...newReport, title: e.target.value})}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Waste Type</label>
+          <select
+            value={newReport.waste_type}
+            onChange={(e) => setNewReport({...newReport, waste_type: e.target.value})}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            required
+          >
+            <option value="general">General</option>
+            <option value="recyclable">Recyclable</option>
+            <option value="hazardous">Hazardous</option>
+            <option value="bulk">Bulk</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+          <input
+            type="text"
+            value={newReport.location}
+            onChange={(e) => setNewReport({...newReport, location: e.target.value})}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            required
+          />
+        </div>
+
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            onClick={() => setShowPickupForm(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+)}
+
+    </div>
+    
   );
 };
 

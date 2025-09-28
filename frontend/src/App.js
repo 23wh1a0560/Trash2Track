@@ -1,66 +1,88 @@
-import React, { useState, useEffect } from "react";
-import { auth } from "./firebase/firebase"; // Firebase authentication
-import { fetchReports } from "./services/api"; // API service to fetch reports
-import Dashboard from "./components/Dashboard"; // Your dashboard component
-import Login from "./components/Login"; // Your login component
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { auth } from "./firebase/firebase";
 
+// Pages
+import LandingPage from "./components/LandingPage";
+import LoginPage from "./components/LoginPage";
+import CitizenDashboard from "./components/CitizenDashboard";
+import WorkerDashboard from "./components/WorkerDashboard";
+import AdminDashboard from "./components/AdminDashboard";
+
+import './App.css';
+
+const AuthContext = createContext(null);
+export const useAuth = () => useContext(AuthContext);
+
+// Protected Route Component
+const PrivateRoute = ({ children, role }) => {
+  const { user } = useAuth();
+  
+  if (!user) return <Navigate to="/login" />;
+  if (role && user.role !== role) return <Navigate to="/" />;
+  
+  return children;
+};
 
 function App() {
-  const [user, setUser] = useState(null); // To store logged-in user
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if there's a logged-in user using Firebase auth
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);  // Set the user state when user is logged in
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        // Fetch additional user info if needed, e.g., role from Firestore
+        // For simplicity, assume role is stored in firebaseUser.role
+        setUser(firebaseUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="App">
-      {/* {user ? (
-        // If the user is logged in, show the Dashboard
-        <Dashboard uid={user.uid} />
-      ) : (
-        // If no user is logged in, show the Login component
-        <Login />
-      )} */}
+    <AuthContext.Provider value={{ user }}>
       <BrowserRouter>
-      <Routes>
-        {/* Public route */}
-        <Route
-          path="/login"
-          element={!user ? <Login /> : <Navigate to="/dashboard" replace />}
-        />
+        <Routes>
+          {/* Public Pages */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected route */}
-        <Route
-          path="/dashboard"
-          element={user ? <Dashboard uid={user.uid} /> : <Navigate to="/login" replace />}
-        />
+          {/* Protected Dashboards */}
+          <Route
+            path="/citizen"
+            element={
+              <PrivateRoute role="citizen">
+                <CitizenDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/worker"
+            element={
+              <PrivateRoute role="worker">
+                <WorkerDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute role="admin">
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
 
-        {/* Redirect root to login or dashboard */}
-        <Route
-          path="/"
-          element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
-        />
-
-        {/* Catch-all redirect */}
-        <Route
-          path="*"
-          element={<Navigate to={user ? "/dashboard" : "/login"} replace />}
-        />
-      </Routes>
+          {/* Catch-all route */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </BrowserRouter>
-    </div>
+    </AuthContext.Provider>
   );
 }
 

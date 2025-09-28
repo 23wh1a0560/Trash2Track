@@ -196,59 +196,33 @@ const WorkerDashboard = () => {
               </div>
             </div>
 
-            {/* Quick Actions & Alerts */}
-            <div className="space-y-6">
-              <div className="card card-eco">
-                <h3 className="text-lg font-bold text-blue-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button 
-                    onClick={() => setActiveTab('routes')}
-                    className="w-full btn-eco flex items-center justify-center space-x-2"
-                  >
-                    <Navigation className="h-4 w-4" />
-                    <span>View Routes</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('complaints')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <AlertTriangle className="h-4 w-4" />
-                    <span>Check Complaints</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('training')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    <span>Training Modules</span>
-                  </button>
-                </div>
-              </div>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Performance Card */}
+  <div className="card p-6 bg-white shadow rounded-xl">
+    <h3 className="text-lg font-bold text-blue-900 mb-4">Performance</h3>
+    <div className="text-center">
+      <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+        <CheckCircle className="h-8 w-8 text-white" />
+      </div>
+      <h4 className="font-bold text-gray-900">Excellent</h4>
+      <p className="text-sm text-gray-600">95% completion rate</p>
+    </div>
+  </div>
 
-              <div className="card">
-                <h3 className="text-lg font-bold text-blue-900 mb-4">Recent Alert</h3>
-                <div className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
-                  <div>
-                    <p className="font-medium text-red-900">High Priority</p>
-                    <p className="text-sm text-red-700">Bin overflow at Central Plaza</p>
-                  </div>
-                </div>
-              </div>
+  {/* Recent Alert Card */}
+  <div className="card p-6 bg-white shadow rounded-xl">
+    <h3 className="text-lg font-bold text-blue-900 mb-4">Recent Alert</h3>
+    <div className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border border-red-200">
+      <AlertTriangle className="h-5 w-5 text-red-600" />
+      <div>
+        <p className="font-medium text-red-900">High Priority</p>
+        <p className="text-sm text-red-700">Bin overflow at Central Plaza</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <div className="card">
-                <h3 className="text-lg font-bold text-blue-900 mb-4">Performance</h3>
-                <div className="text-center">
-                  <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                    <CheckCircle className="h-8 w-8 text-white" />
-                  </div>
-                  <h4 className="font-bold text-gray-900">Excellent</h4>
-                  <p className="text-sm text-gray-600">95% completion rate</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        ){'}'}
 
         {/* Schedule Tab */}
         {activeTab === 'schedule' && (
@@ -405,8 +379,8 @@ const WorkerDashboard = () => {
           </div>
         )}
       </div>
-    </div>
-  );
-};
+</div>
+)}
+
 
 export default WorkerDashboard;
