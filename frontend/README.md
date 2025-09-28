@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+# T2T – Trash to Track
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**T2T – Trash to Track** is an intelligent, sustainability-focused waste management platform designed to optimize urban sanitation. The system integrates citizens, municipal workers, and administrators, leveraging real-time IoT data, cloud services, and responsive web technologies to create cleaner, smarter, and more efficient cities.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Citizen Module
+- Submit geo-tagged photos of overflowing bins or waste dumps.  
+- Track waste collection schedules.  
+- Earn eco-points for responsible participation.  
+- Monitor the status of submitted reports in real time.  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Worker Module
+- Receive alerts from IoT-enabled smart bins.  
+- Optimized collection routes for efficiency.  
+- Access training modules and real-time performance dashboards.  
+- Log completed tasks for tracking and accountability.  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Administrator Module
+- Monitor bin statuses and fill levels through dashboards.  
+- Assign and manage worker routes efficiently.  
+- Analyze operational efficiency with real-time metrics.  
+- Issue rewards and penalties to maintain accountability.  
+- Generate insights for strategic planning and resource allocation.  
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## System Architecture
 
-### `npm run build`
+### Frontend
+- **React.js** – Component-based UI framework for dynamic web apps.  
+- **CRACO** – Custom Webpack and Tailwind CSS configuration without ejecting.  
+- **Tailwind CSS** – Utility-first styling for responsive and consistent design.  
+- **shadcn/ui** – Prebuilt, reusable UI components for rapid development.  
+- **Lucide React** – Lightweight and customizable icon library.  
+- **React Router** – Client-side routing and navigation.  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Backend & Cloud Services
+- **Firebase Authentication** – Secure login with role-based access control.  
+- **Firestore** – Real-time NoSQL database for reports, sensor data, and users.  
+- **Firebase Functions** – Serverless backend logic and automation.  
+- **Firebase Storage** – Cloud storage for photos and attachments.  
+- **Firebase Hosting** – Frontend hosting (also compatible with Vercel or Netlify).  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### IoT Integration
+- Smart bins equipped with **ultrasonic or weight sensors**.  
+- Real-time fill-level monitoring triggers alerts and route updates.  
+- Data sent via Firebase SDK for analytics and dashboard visualization.  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Workflow Overview
+1. Citizens report waste issues with geo-tagged photos.  
+2. IoT smart bins transmit real-time fill-level data.  
+3. Alerts and optimized routes are sent to municipal workers.  
+4. Administrators monitor dashboards for trends and efficiency.  
+5. Rewards and penalties maintain accountability and encourage citizen engagement.  
+6. Data analytics informs operational improvements and policy decisions.  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Technology Stack
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Layer      | Technology |
+|------------|-----------|
+| Frontend   | React.js, Tailwind CSS, shadcn/ui, Lucide React, CRACO, React Router |
+| Backend    | Firebase Auth, Firestore, Firebase Functions, Firebase Storage |
+| Hosting    | Firebase Hosting, Vercel, Netlify |
+| IoT        | Ultrasonic / Weight Sensors |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## Benefits
+- Real-time waste monitoring and alerts.  
+- Optimized collection routes reduce cost and fuel consumption.  
+- Enhanced operational efficiency and accountability.  
+- Encourages public participation via eco-point incentives.  
+- Promotes sustainable urban sanitation practices.  
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
