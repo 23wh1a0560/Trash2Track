@@ -1,3 +1,4 @@
+import { useAuth } from '../App';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -6,14 +7,22 @@ import {
   AlertTriangle, CheckCircle, XCircle, TrendingUp
 } from 'lucide-react';
 
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const CitizenDashboard = () => {
   const navigate = useNavigate();
-  // Mock user data since useAuth is not available
-  const user = { id: 1, name: 'John Doe', role: 'citizen', eco_points: 1250 };
-  const logout = () => navigate('/login');
+ const { user, logout } = useAuth(); // Get these from your Context
+
+const handleLogout = async () => {
+  try {
+    await logout(); // 1. Triggers Firebase signOut in App.js
+    navigate('/', { replace: true }); // 2. Forces navigation to Landing Page
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
   
   const [activeTab, setActiveTab] = useState('dashboard');
   const [reports, setReports] = useState([
@@ -46,6 +55,8 @@ const CitizenDashboard = () => {
     location: '',
     image_url: ''
   });
+  const [pickupSchedule, setPickupSchedule] = useState([]);
+
 
   useEffect(() => {
     if (user?.role !== 'citizen') {
@@ -78,6 +89,33 @@ const CitizenDashboard = () => {
       setLoading(false);
     }
   };
+  const handleSpecialPickupSubmit = (e) => {
+  e.preventDefault();
+
+  // Step 1: compute next day
+const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const today = new Date();
+let nextDayIndex = (today.getDay() + 1) % 7; // next day
+let nextDayName = daysOfWeek[nextDayIndex];
+
+// Step 2: create the pickup object
+const newPickup = {
+  id: pickupSchedule.length + 1,
+  title: newReport.title,
+  type: newReport.waste_type,
+  location: newReport.location,
+  time: '7:00 AM', // default time
+  day: nextDayName, // use the computed next day
+};
+
+
+  setPickupSchedule([...pickupSchedule, newPickup]);
+  setShowPickupForm(false);
+
+  // reset the form
+  setNewReport({ title: '', description: '', waste_type: 'general', location: '', image_url: '' });
+};
+
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -156,7 +194,7 @@ const CitizenDashboard = () => {
                 <Bell className="h-5 w-5" />
               </button>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center space-x-2 text-emerald-700 hover:text-emerald-900"
               >
                 <LogOut className="h-5 w-5" />
@@ -329,41 +367,37 @@ const CitizenDashboard = () => {
           </div>
         )}
 
-        {/* Schedule Tab */}
         {activeTab === 'schedule' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-emerald-900">Collection Schedule</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {mockSchedule.map((schedule, index) => (
-                <div key={index} className="card">
-                  <div className="flex items-center justify-between mb-4">
-                    <Calendar className="h-6 w-6 text-emerald-600" />
-                  </div>
-                  <h3 className="font-bold text-gray-900 mb-2">{schedule.day}</h3>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <span>{schedule.time}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Trash2 className="h-4 w-4 text-gray-500" />
-                      <span>{schedule.type}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-emerald-900">Collection Schedule</h2>
+    
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {mockSchedule.map((schedule, index) => (
+        <div key={`mock-${index}`} className="card">
+          <h3 className="font-bold text-gray-900 mb-2">{schedule.day}</h3>
+          <p className="text-gray-600">{schedule.time} - {schedule.type}</p>
+        </div>
+      ))}
 
-            <div className="card">
-              <h3 className="text-xl font-bold text-emerald-900 mb-4">Request Special Pickup</h3>
-              <p className="text-gray-600 mb-4">Need to dispose of bulk items or hazardous waste? Request a special pickup.</p>
-              <button onClick={() => setShowPickupForm(true)} className="btn-primary">
-                Request Special Pickup
-              </button>
-            </div>
-          </div>
-        )}
+      {pickupSchedule.map((pickup) => (
+        <div key={`pickup-${pickup.id}`} className="card border-emerald-500 border-2">
+          <h3 className="font-bold text-gray-900 mb-2">{pickup.day}</h3>
+          <p className="text-gray-600">{pickup.time} - {pickup.type}</p>
+          <p className="text-gray-500 text-sm">{pickup.location}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="card">
+      <h3 className="text-xl font-bold text-emerald-900 mb-4">Request Special Pickup</h3>
+      <p className="text-gray-600 mb-4">Need to dispose of bulk items or hazardous waste? Request a special pickup.</p>
+      <button onClick={() => setShowPickupForm(true)} className="btn-primary">
+        Request Special Pickup
+      </button>
+    </div>
+  </div>
+)}
+
 
         {/* Training Tab */}
         {activeTab === 'training' && (
@@ -565,14 +599,7 @@ const CitizenDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Request Special Pickup</h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleCreateReport(e);
-                setShowPickupForm(false);
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSpecialPickupSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                 <input

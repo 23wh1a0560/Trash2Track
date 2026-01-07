@@ -8,7 +8,8 @@ import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
 import CitizenDashboard from "./components/CitizenDashboard";
 import WorkerDashboard from "./components/WorkerDashboard"; 
-import AdminDashboard from "./components/AdminDashboard";
+import AdminDashboard from "./components/admin/AdminDashboard"
+//import AdminDashboard from "./components/AdminDashboard";
 
 import "./App.css";
 

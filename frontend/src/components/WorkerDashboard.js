@@ -1,3 +1,5 @@
+import { useAuth } from '../App';
+import { BinMapView } from '@/components/map/BinMapView'
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,10 +13,16 @@ const API = `${BACKEND_URL}/api`;
 
 const WorkerDashboard = () => {
   const navigate = useNavigate();
-  // Mock user data since useAuth is not available
-  const user = { id: 1, name: 'Mike Johnson', role: 'worker' };
-  const logout = () => navigate('/login');
-  
+ const { user, logout } = useAuth(); // Get these from your Context
+
+const handleLogout = async () => {
+  try {
+    await logout(); // 1. Triggers Firebase signOut in App.js
+    navigate('/', { replace: true }); // 2. Forces navigation to Landing Page
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
   const [activeTab, setActiveTab] = useState('dashboard');
   const [schedules, setSchedules] = useState([]);
   const [reports, setReports] = useState([
@@ -44,18 +52,34 @@ const WorkerDashboard = () => {
     // fetchWorkerData(); // Using mock data
   }, [user, navigate]);
 
-  const handleUpdateReportStatus = async (reportId, status) => {
-    try {
-      // Mock updating report status
-      setReports(reports.map(report => 
-        report.id === reportId 
-          ? { ...report, status, worker_id: user.id }
-          : report
-      ));
-    } catch (error) {
-      console.error('Error updating report status:', error);
+  const handleUpdateReportStatus = (reportId, status) => {
+  // Update reports
+  setReports(prevReports =>
+    prevReports.map(report =>
+      report.id === reportId ? { ...report, status, worker_id: user.id } : report
+    )
+  );
+
+  // Accept → add to schedule
+  if (status === 'in_progress') {
+    const acceptedReport = reports.find(r => r.id === reportId);
+    if (acceptedReport) {
+      setSchedules(prev => [
+        ...prev,
+        { ...acceptedReport, status: 'in_progress' } // add to schedule
+      ]);
+      alert(`Report "${acceptedReport.title}" Accepted`);
     }
-  };
+  }
+
+  // Resolve → remove from schedule
+  if (status === 'resolved') {
+    setSchedules(prev => prev.filter(r => r.id !== reportId));
+    const resolvedReport = reports.find(r => r.id === reportId);
+    if (resolvedReport) alert(`Report "${resolvedReport.title}" Resolved`);
+  }
+};
+
 
   const mockDailySchedule = [
     { id: 1, area: 'Downtown District', time: '7:00 AM', bins: 12, status: 'pending' },
@@ -122,7 +146,7 @@ const WorkerDashboard = () => {
                 <Bell className="h-5 w-5" />
               </button>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center space-x-2 text-blue-700 hover:text-blue-900"
               >
                 <LogOut className="h-5 w-5" />
@@ -223,33 +247,6 @@ const WorkerDashboard = () => {
 
             {/* Quick Actions & Alerts */}
             <div className="space-y-6">
-              <div className="card card-eco">
-                <h3 className="text-lg font-bold text-blue-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setActiveTab('routes')}
-                    className="w-full btn-eco flex items-center justify-center space-x-2"
-                  >
-                    <Navigation className="h-4 w-4" />
-                    <span>View Routes</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('complaints')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <AlertTriangle className="h-4 w-4" />
-                    <span>Check Complaints</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('training')}
-                    className="w-full btn-secondary flex items-center justify-center space-x-2"
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    <span>Training Modules</span>
-                  </button>
-                </div>
-              </div>
-
               <div className="card">
                 <h3 className="text-lg font-bold text-blue-900 mb-4">Recent Alert</h3>
                 <div className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border border-red-200">
@@ -276,120 +273,130 @@ const WorkerDashboard = () => {
         )}
 
         {/* Schedule Tab */}
-        {activeTab === 'schedule' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-blue-900">Daily Schedule</h2>
-           
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {mockDailySchedule.map((schedule) => (
-                <div key={schedule.id} className="card">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-gray-900">{schedule.area}</h3>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      schedule.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      schedule.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {schedule.status.replace('_', ' ')}
-                    </span>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-gray-600" />
-                      <span>Scheduled: {schedule.time}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Truck className="h-4 w-4 text-gray-600" />
-                      <span>{schedule.bins} bins to collect</span>
-                    </div>
-                  </div>
-                  <button
-                    className={`w-full ${
-                      schedule.status === 'completed' ? 'btn-secondary' : 'btn-primary'
-                    }`}
-                    disabled={schedule.status === 'completed'}
-                  >
-                    {schedule.status === 'completed' ? 'Completed' :
-                     schedule.status === 'in_progress' ? 'In Progress' : 'Start Route'}
-                  </button>
-                </div>
-              ))}
-            </div>
+{activeTab === 'schedule' && (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-blue-900">Daily Schedule</h2>
+   
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {schedules.map((schedule) => (
+        <div key={schedule.id} className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-900">
+              {schedule.title || schedule.area}
+            </h3>
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+              schedule.status === 'completed' ? 'bg-green-100 text-green-800' :
+              schedule.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              {schedule.status.replace('_', ' ')}
+            </span>
           </div>
-        )}
+          <div className="space-y-2 mb-4">
+            {schedule.bins && (
+              <div className="flex items-center space-x-2">
+                <Truck className="h-4 w-4 text-gray-600" />
+                <span>{schedule.bins} bins to collect</span>
+              </div>
+            )}
+            {schedule.time && (
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-gray-600" />
+                <span>Scheduled: {schedule.time}</span>
+              </div>
+            )}
+            {schedule.location && (
+              <div className="flex items-center space-x-2">
+                <MapPin className="h-4 w-4 text-gray-600" />
+                <span>{schedule.location}</span>
+              </div>
+            )}
+          </div>
+          <button
+            className={`w-full ${
+              schedule.status === 'completed' ? 'btn-secondary' : 'btn-primary'
+            }`}
+            disabled={schedule.status === 'completed'}
+          >
+            {schedule.status === 'completed' ? 'Completed' :
+             schedule.status === 'in_progress' ? 'In Progress' : 'Start Route'}
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
         {/* Routes Tab */}
-        {activeTab === 'routes' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-blue-900">Optimized Routes</h2>
-           
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Route Details */}
-              <div className="card">
-                <h3 className="text-xl font-bold text-blue-900 mb-4">Today's Route - Downtown District</h3>
-                <p className="text-gray-600 mb-6">Optimized route for maximum efficiency and minimal travel time</p>
-               
-                <div className="space-y-4">
-                  {mockRouteOptimization.map((stop, index) => (
-                    <div key={stop.stop} className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
-                      <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
-                        {stop.stop}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900">{stop.location}</h4>
-                          <span className="text-sm text-gray-600">{stop.time}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">Estimated duration: {stop.duration}</p>
-                      </div>
-                      <MapPin className="h-5 w-5 text-blue-600" />
-                    </div>
-                  ))}
-                </div>
-               
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Total estimated time:</span>
-                    <span className="font-medium text-blue-900">1 hour 30 minutes</span>
-                  </div>
-                </div>
-              </div>
+{activeTab === 'routes' && (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-blue-900">Optimized Routes</h2>
 
-              {/* Route Map */}
-              <div className="card">
-                <h3 className="text-xl font-bold text-blue-900 mb-4">Route Map</h3>
-                <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                  <img
-                    src="/assets/images/route-map.png"
-                    alt="Optimized Route Map showing collection points"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f4f6'/%3E%3Cg fill='%236b7280'%3E%3Cpath d='M200 100 L300 150 L280 250 L200 300 L120 250 L100 150 Z' stroke='%234f46e5' stroke-width='3' fill='%23ddd6fe'/%3E%3Ccircle cx='200' cy='100' r='8' fill='%23059669'/%3E%3Ccircle cx='300' cy='150' r='8' fill='%23dc2626'/%3E%3Ccircle cx='280' cy='250' r='8' fill='%23dc2626'/%3E%3Ccircle cx='200' cy='300' r='8' fill='%23dc2626'/%3E%3Ccircle cx='120' cy='250' r='8' fill='%23dc2626'/%3E%3Ccircle cx='100' cy='150' r='8' fill='%23dc2626'/%3E%3Ctext x='200' y='50' text-anchor='middle' font-size='14' font-weight='bold' fill='%234f46e5'%3EOptimized Collection Route%3C/text%3E%3Ctext x='200' y='70' text-anchor='middle' font-size='12' fill='%236b7280'%3EDowntown District%3C/text%3E%3Ctext x='210' y='105' font-size='10' fill='%23059669'%3EStart%3C/text%3E%3Ctext x='310' y='155' font-size='10' fill='%23dc2626'%3EStop 1%3C/text%3E%3Ctext x='290' y='270' font-size='10' fill='%23dc2626'%3EStop 2%3C/text%3E%3Ctext x='210' y='320' font-size='10' fill='%23dc2626'%3EStop 3%3C/text%3E%3Ctext x='90' y='270' font-size='10' fill='%23dc2626'%3EStop 4%3C/text%3E%3Ctext x='70' y='155' font-size='10' fill='%23dc2626'%3EStop 5%3C/text%3E%3C/g%3E%3C/svg%3E";
-                    }}
-                  />
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-green-600 rounded-full"></div>
-                    <span>Starting Point</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                    <span>Collection Points</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-1 bg-purple-600"></div>
-                    <span>Optimized Route</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4 text-blue-600" />
-                    <span>GPS Waypoints</span>
-                  </div>
-                </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Route Details */}
+      <div className="card">
+        <h3 className="text-xl font-bold text-blue-900 mb-4">Today's Route - Downtown District</h3>
+        <p className="text-gray-600 mb-6">Optimized route for maximum efficiency and minimal travel time</p>
+
+        <div className="space-y-4">
+          {mockRouteOptimization.map((stop) => (
+            <div key={stop.stop} className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                {stop.stop}
               </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">{stop.location}</h4>
+                  <span className="text-sm text-gray-600">{stop.time}</span>
+                </div>
+                <p className="text-sm text-gray-600">Estimated duration: {stop.duration}</p>
+              </div>
+              <MapPin className="h-5 w-5 text-blue-600" />
             </div>
+          ))}
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">Total estimated time:</span>
+            <span className="font-medium text-blue-900">1 hour 30 minutes</span>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* Route Map */}
+      <div className="card">
+        <h3 className="text-xl font-bold text-blue-900 mb-4">Route Map</h3>
+
+        {/* BinMapView */}
+        <div className="aspect-square rounded-lg overflow-hidden">
+          <BinMapView selectedStatus="all" />
+        </div>
+
+        {/* Legend / Info */}
+        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+            <span>Starting Point</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-600 rounded-full"></div>
+            <span>Collection Points</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-1 bg-purple-600"></div>
+            <span>Optimized Route</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <MapPin className="w-4 h-4 text-blue-600" />
+            <span>GPS Waypoints</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)} {/* <-- close activeTab === 'routes' */}
 
         {/* Complaints Tab */}
         {activeTab === 'complaints' && (

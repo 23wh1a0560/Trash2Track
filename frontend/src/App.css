@@ -320,3 +320,15 @@ h1, h2, h3, h4, h5, h6 {
 .border-eco {
   border-color: rgba(16, 185, 129, 0.3);
 }
+.tab-btn {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+
+.tab-btn.active {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
