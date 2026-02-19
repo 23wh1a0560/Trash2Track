@@ -6,8 +6,8 @@ import { signOut } from "firebase/auth";
 // Pages
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
-import CitizenDashboard from "./components/CitizenDashboard";
-import WorkerDashboard from "./components/WorkerDashboard"; 
+import CitizenDashboard from "./components/citizen/CitizenDashboard";
+import WorkerDashboard from "./components/worker/WorkerDashboard"; 
 import AdminDashboard from "./components/admin/AdminDashboard"
 //import AdminDashboard from "./components/AdminDashboard";
 
@@ -44,6 +44,9 @@ function App() {
         
         if (email.includes("admin")) role = "admin";
         else if (email.includes("worker")) role = "worker";
+        
+        console.log("Logged in email:", firebaseUser.email);
+        console.log("Detected role:", role);
 
         setUser({
           uid: firebaseUser.uid,
