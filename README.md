@@ -1,4 +1,4 @@
-# T2T – Trash to Track
+## T2T – Trash to Track
 
 **T2T – Trash to Track** is an intelligent, sustainability-focused waste management platform designed to optimize urban sanitation. The system integrates citizens, municipal workers, and administrators, leveraging real-time IoT data, cloud services, and responsive web technologies to create cleaner, smarter, and more efficient cities.
 
