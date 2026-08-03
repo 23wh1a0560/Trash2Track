@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@900&display=swap');
+
+:root {
+  --butter-bean: #FDFAD8;
+  --sungold: #FF5B03;
+  --lemon: #FFF24D;
+  --beet: #AB1717;
+  --grassy: #47510B;
+  --seed: #CAD23C;
+  --petal: #FFB6A9;
+  --linen: #A1AED1;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--butter-bean);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden; /* Prevent side-to-side body shake */
+}
+
+/* SECTION 1: THE DECK STAGE */
+.deck-stage {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2500px;
+  /* Change sticky to relative so it scrolls away */
+  position: relative; 
+  z-index: 10;
+  background-color: var(--butter-bean);
+  overflow: hidden;
+}
+
+.deck-wrapper {
+  position: relative;
+  width: 90%;
+  max-width: 1100px;
+  height: 70vh;
+  transform-style: preserve-3d;
+}
+
+/* 3D TUCK CLASSES */
+.tuck-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 60px;
+  padding: 60px;
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backface-visibility: hidden;
+  box-shadow: 0 50px 100px rgba(71, 81, 11, 0.15);
+}
+
+.tuck-active { transform: translateZ(0) translateX(0) rotateY(0deg); z-index: 50; opacity: 1; }
+.tuck-next { transform: translateZ(-500px) translateX(70%) rotateY(-25deg); z-index: 30; opacity: 0.4; filter: blur(4px); }
+.tuck-prev { transform: translateZ(-500px) translateX(-70%) rotateY(25deg); z-index: 30; opacity: 0.4; filter: blur(4px); }
+.tuck-hidden { transform: translateZ(-1000px) scale(0.5); opacity: 0; z-index: 1; }
+
+/* SECTION 2: THE "EMPTY ARENA" CONTENT (Below) */
+.content-floor {
+  position: relative;
+  z-index: 20;
+  background: var(--grassy);
+  color: var(--butter-bean);
+  padding: 120px 8%;
+  border-top-left-radius: 80px;
+  border-top-right-radius: 80px;
+  box-shadow: 0 -50px 100px rgba(0,0,0,0.2);
+  /* The floor starts right after the deck-stage height */
+}
+
+.blob {
+  position: absolute;
+  filter: blur(120px);
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
+}

@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#FDFAD8] text-[#47510B] antialiased overflow-x-hidden;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Heavy Industrial Shadow */
+  .shadow-heavy {
+    box-shadow: 12px 12px 0px 0px #2A3106;
+  }
+  
+  /* Tactical Border */
+  .border-tactical {
+    @apply border-[4px] border-[#47510B];
+  }
+}
+
+/* Splash Screen Progress Animation */
+@keyframes progress-grow {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.animate-progress {
+  animation: progress-grow 3s ease-in-out forwards;
+}

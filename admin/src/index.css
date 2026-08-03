@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-red: #AB1717;
+  --primary-yellow: #CAD23C;
+  --bg-bean: #FDFAD8;       /* The Main Page */
+  --panel-blue: #A1AED1;    /* The "Patch" Color */
+  --dark-border: #47510B;
+}
+
+@layer base {
+  body {
+  @apply min-h-screen flex items-center justify-center font-sans overflow-x-hidden;
+  background-color: #fdfad8; /* ← BLUE BASE */
+
+  background-image: radial-gradient(#AB1717 0.8px, transparent 0.8px);
+  background-size: 30px 30px;
+}
+}
+
+.red-stack-shadow {
+box-shadow:
+  8px 8px 0px #47510B,
+  0 0 0 3px #FDFAD8;
+  background-image: repeating-linear-gradient(
+  45deg,
+  rgba(0,0,0,0.03),
+  rgba(0,0,0,0.18) 2px,
+  transparent 4px,
+  transparent 6px
+);
+}
+.yellow-stack-shadow {
+  box-shadow: 8px 8px 0px 0px var(--dark-border);
+  background-color: #A1AED1;
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.20),
+      rgba(255,255,255,0.20) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.20),
+      rgba(255,255,255,0.20) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+/* We change this to a DARKER shadow to make the blue look "sunken" */
+.panel-inset-shadow {
+  box-shadow: 
+    inset 6px 6px 0px #47510B,
+    8px 8px 0px 0px #47510B;
+}

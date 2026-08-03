@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-[#A1AED1] overflow-hidden antialiased; }
+}
+
+@keyframes cinematic-zoom {
+  0% { transform: scale(0.9); opacity: 0; filter: blur(20px) brightness(0.8); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0px) brightness(1); }
+}
+
+@keyframes warp-out {
+  0% { transform: scale(1); filter: blur(0px); opacity: 1; }
+  100% { transform: scale(15); filter: blur(40px); opacity: 0; }
+}
+
+.animate-reveal {
+  animation: cinematic-zoom 2s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+}
+
+.animate-warp {
+  animation: warp-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+.grain-overlay {
+  background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.05;
+}
+
+@layer components {
+  .tactical-input {
+    @apply bg-[#FFF24D] border-4 border-[#003366] p-6 text-3xl font-[1000] italic text-[#AB1717] 
+           placeholder:text-[#003366]/20 focus:outline-none focus:bg-white transition-all 
+           shadow-[8px_8px_0px_#003366];
+  }
+
+  .tactical-label {
+    @apply text-[#47510B] font-[1000] uppercase text-sm tracking-[0.3em] mb-2 block;
+  }
+}
+
+@keyframes slide-up {
+  0% { transform: translateY(100%) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.flip-container { perspective: 1000px; }
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.is-flipped { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back { transform: rotateY(180deg); }
+
+@keyframes slide-up {
+  from { transform: translateY(100px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Ensure the grain overlay doesn't block the color transition */
+.grain-overlay {
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+@keyframes loading-bar {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 10s linear forwards;
+}
+
+/* For that smooth slide-up effect on tabs */
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes loading-bar {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 6s linear forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.animate-scan {
+  animation: scan 2s linear infinite;
+}
