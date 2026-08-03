@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+citizen/node_modules/
+worker/node_modules/
+admin/node_modules/
